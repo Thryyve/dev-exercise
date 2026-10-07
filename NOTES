@@ -1,0 +1,18 @@
+Repo: https://github.com/Thryyve/dev-exercise
+Full details are in NOTES.md and the handwritten/ folder (a PDF of the handwritten pages is also attached).
+
+Fixes made:
+1. Search query (SQL + Java): AND/OR precedence let archived tasks appear in results and ignored the status filter. Added brackets. Same fix in both files in db/.
+2. Performance: removed an artificial Thread.sleep that delayed every request by up to 1 second.
+3. Pagination: moved from in-memory slicing to database-level paging, clamped page/pageSize, added an id tiebreaker to the sort.
+4. Validation: an invalid status now returns 400 with a message instead of 500.
+5. Schema: CHECK constraint on status, NOT NULL on archived, @PrePersist sets createdAt.
+6. Frontend: fixed a race condition and a stuck "Loading..." after errors in useTasks; page resets to 1 when search or status changes; added a 300 ms search debounce; the UI shows the backend's error message.
+
+Not changed: status is still a String in the entity (an enum would be a bigger change); no automated tests added; Spring Boot version, CORS and H2 console left as they are. The Oracle files were fixed by reading only, as they cannot run locally.
+
+Biggest remaining risk: no automated tests, so regressions in search or pagination could go unnoticed. LIKE '%term%' also cannot use an index.
+
+Assumptions: archived tasks should never appear in search results; page size is capped at 100.
+
+AI use: I used Claude to help locate bugs and draft fixes. I ran the app, reproduced each bug, and tested each fix myself. The handwritten explanations are my own.
