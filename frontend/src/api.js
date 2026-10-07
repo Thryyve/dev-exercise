@@ -8,12 +8,18 @@ export async function fetchTasks({ query = '', status = '', page = 1, pageSize =
   params.set('pageSize', String(pageSize));
 
   const url = `${API_BASE}/tasks?${params.toString()}`;
-  console.log('[api] fetching:', url);
 
   const response = await fetch(url);
 
   if (!response.ok) {
-    throw new Error(`Request failed: ${response.status}`);
+    let message = `Request failed: ${response.status}`;
+    try {
+      const body = await response.json();
+      if (body.error) message = body.error;
+    } catch {
+      // no JSON body; keep the default message
+    }
+    throw new Error(message);
   }
 
   return response.json();

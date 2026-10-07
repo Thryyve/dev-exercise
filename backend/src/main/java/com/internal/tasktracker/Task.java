@@ -7,6 +7,11 @@ import java.time.LocalDateTime;
 @Table(name = "tasks")
 public class Task {
 
+    @PrePersist
+    void onCreate() {
+        if (createdAt == null) createdAt = LocalDateTime.now();
+    }
+
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
